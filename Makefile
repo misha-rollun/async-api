@@ -33,3 +33,6 @@ composer-test:
 
 logstash-logs:
 	docker-compose logs -f -t logstash-local
+
+asyncapi-generate:
+	docker-compose run --rm node ./utilities/generate.sh -o /var/www/app -s /var/www/asyncapi/simple.yml
