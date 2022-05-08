@@ -1,0 +1,50 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: docker/nginx
+      dockerfile: Dockerfile
+    volumes:
+      - ./simple:/var/www/app
+    ports:
+      - 8080:80
+    depends_on:
+      - php-fpm
+
+  php-fpm:
+    build:
+      context: docker/php-fpm
+      dockerfile: Dockerfile
+    volumes:
+      - ./simple:/var/www/app
+    environment:
+      PHP_IDE_CONFIG: serverName=rollun-logger
+      LOGSTASH_HOST: logstash-local
+      LOGSTASH_PORT: "5044"
+      LOGSTASH_INDEX: suppliers-local
+
+  logstash-local:
+    image: docker.elastic.co/logstash/logstash:7.7.0
+    volumes:
+      - ./docker/logstash/config/:/usr/share/logstash/config/
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    environment:
+      RABBITMQ_ERLANG_COOKIE: SWQOKODSQALRPCLNMEQG
+      RABBITMQ_DEFAULT_USER: rabbit
+      RABBITMQ_DEFAULT_PASS: rabbit
+    ports:
+      - "8081:15672"
+      - "5672:5672"
+    volumes:
+      - ./docker/rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins
+
+  node:
+    build:
+      context: docker/node
+      dockerfile: Dockerfile
+    volumes:
+      - ./simple:/var/www/app
+      - ./asyncapi:/var/www/asyncapi
