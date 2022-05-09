@@ -17,4 +17,32 @@ use AsyncAPI\Handlers\AMQPRPCClientHandler;
 
 final class Producer extends ApplicationContract
 {
+    /**
+     * 
+     *
+     * @param MessageContract $message
+     */
+    public function publishUserSignedUp(
+        MessageContract $message,
+        array $customConfig = []
+    )
+    {
+        $this->getBrokerClient()->basicPublish(
+            $message,
+            array_merge([
+                'exchangeName' => 'org.ga.examples',
+                'exchangeType' => 'topic',
+                'bindingKey'   => '',
+                'passive'      => false,
+                'durable' => false,
+                'autoDelete' => true,
+                'internal'     => false,
+                'noWait'       => false,
+                'arguments'    => [],
+                'ticket'       => null,
+                'mandatory'    => false,
+                'immediate'    => false,
+            ], $customConfig)
+        );
+    }
 }

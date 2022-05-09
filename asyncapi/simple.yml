@@ -10,8 +10,17 @@ servers:
 channels:
     user/signedup:
         subscribe:
+            operationId: 'retrieveUserSignedUp'
             message:
                 $ref: '#/components/messages/UserSignedUp'
+            bindings:
+                $ref: '#/components/operationBindings/userSignedUp'
+        publish:
+            operationId: 'publishUserSignedUp'
+            message:
+                $ref: '#/components/messages/UserSignedUp'
+            bindings:
+                $ref: '#/components/operationBindings/userSignedUp'
 components:
     messages:
         UserSignedUp:
@@ -25,3 +34,21 @@ components:
                         type: string
                         format: email
                         description: Email of the user
+
+    operationBindings:
+        userSignedUp:
+            amqp:
+                is: routingKey
+                x-type: basic
+                exchange:
+                    name: 'org.ga.examples'
+                    type: topic
+                    durable: false
+                    autoDelete: true
+                queue:
+                    name: '1.event.example.requested'
+                    durable: false
+                    autoDelete: true
+                    exclusive: false
+                    deliveryMode: 2
+                bindingVersion: 0.2.0
