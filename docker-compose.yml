@@ -18,11 +18,16 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./simple:/var/www/app
+    depends_on:
+      - rabbitmq
     environment:
       PHP_IDE_CONFIG: serverName=rollun-logger
       LOGSTASH_HOST: logstash-local
       LOGSTASH_PORT: "5044"
       LOGSTASH_INDEX: suppliers-local
+      BROKER_HOST: rabbitmq
+      BROKER_USER: rabbit
+      BROKER_PASSWORD: rabbit
 
   logstash-local:
     image: docker.elastic.co/logstash/logstash:7.7.0
